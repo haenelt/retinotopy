@@ -24,7 +24,6 @@ G = [0 1 0];
 B = [0 0 1];
 
 % make folder
-cd(fileparts(which(mfilename)));
 if ~exist(dir_out,'dir') 
     mkdir(dir_out); 
 end
@@ -71,7 +70,7 @@ img_temp = flip(img, 2);
 img(:,1:radius,:) = img_temp(:,1:radius,:);
 
 % save image
-imwrite(img,'./img/pol_legend.png');
+imwrite(img, fullfile(dir_out, 'pol_legend.png'));
 
 % eccentricity
 cycles = 1;
@@ -98,4 +97,4 @@ img(:,:,2) = imgG;
 img(:,:,3) = imgB;
 
 % save image
-imwrite(img,'./img/ecc_legend.png');
+imwrite(img, fullfile(dir_out, 'ecc_legend.png'));
