@@ -4,16 +4,15 @@
 % with rings and wedges. The analysis includes the following steps: 
 % (1) baseline correction, (2) percent signal change (psc) conversion, 
 % (3) phase calculation, (4) averaging over sessions with opposite stimulus 
-% direction. If a baseline correction was already done (i.e. if a file with 
-% prefix b exists), no baseline correction is performed. If psc conversion 
-% was already done (i.e. if a file with prefix p exists), no conversion is 
-% performed. Note that the number of cycles <freq> is not an integer value 
-% in my runs. The first cycle fraction is discarded from further analysis. 
-% We use this to have already initialised activation in the first volume.
+% direction. For baseline correction, a time series with prefix b is
+% written. For psc conversion, a time series with prefix p is written. Note 
+% that the number of cycles <freq> is not an integer value in my runs. The 
+% first cycle fraction is discarded from further analysis. We use this to 
+% have already initialised activation in the first volume.
 
 % input data
-input.pol.data.pos = '/data/pt_01880/Experiment3_Stripes/p3/retinotopy2/pol_anticlock/udata.nii'; % anticlock
-input.pol.data.neg = '/data/pt_01880/Experiment3_Stripes/p3/retinotopy2/pol_clock/udata.nii'; % clock
+input.pol.data.pos = '/data/pt_01880/test/pol_anticlock/uadata.nii'; % anticlock
+input.pol.data.neg = '/data/pt_01880/test/pol_clock/uadata.nii'; % clock
 input.pol.tr = 2; % repetition time in s
 input.pol.period = 64; % cycle period in s
 input.pol.fix = 12; % pre and post run baseline block in s
@@ -21,8 +20,8 @@ input.pol.freq = 8.25; % number of cycles
 input.pol.hp_cutoff = 192; % cutoff frequency 1/cutoff in Hz
 input.pol.psc_cutoff = 50; % threshold value for psc conversion
 
-input.ecc.data.pos = '/data/pt_01880/Experiment3_Stripes/p3/retinotopy2/ecc_expanding/udata.nii'; % expanding
-input.ecc.data.neg = '/data/pt_01880/Experiment3_Stripes/p3/retinotopy2/ecc_contracting/udata.nii'; % contracting
+input.ecc.data.pos = '/data/pt_01880/test/ecc_expanding/uadata.nii'; % expanding
+input.ecc.data.neg = '/data/pt_01880/test/ecc_contracting/uadata.nii'; % contracting
 input.ecc.tr = 2;
 input.ecc.period = 32;
 input.ecc.fix = 12;
@@ -51,29 +50,17 @@ end
 
 % run baseline correction
 for i = 1:length(all_data)
-    if all_hp_cutoff(i)
-        if exist(fullfile(path{i},['b' file{i} ext{i}]), 'file')
-            continue
-        else
-            dh_baseline_correction(...
-                all_data{i},...
-                all_tr(i),...
-                all_hp_cutoff(i));
-        end
-    end
+    dh_baseline_correction(...
+        all_data{i},...
+        all_tr(i),...
+        all_hp_cutoff(i));
 end
 
 % run psc conversion
 for i = 1:length(all_data)
-    if all_psc_cutoff(i)
-        if exist(fullfile(path{i},['pb' file{i} ext{i}]), 'file')
-            continue
-        else
-            dh_psc_conversion(...
-                fullfile(path{i},['p' file{i} ext{i}]),...
-                all_psc_cutoff(i));
-        end
-    end
+    dh_psc_conversion(...
+        fullfile(path{i},['b' file{i} ext{i}]),...
+        all_psc_cutoff(i));
 end
 
 % run frequency analysis
