@@ -66,12 +66,7 @@ end
 % run psc conversion
 for i = 1:length(all_data)
     if all_psc_cutoff(i)
-        if all_hp_cutoff(i)
-            pref_hp = 'b';
-        else
-            pref_hp = '';
-        end
-        if exist(fullfile(path{i},['p' pref_hp file{i} ext{i}]), 'file')
+        if exist(fullfile(path{i},['pb' file{i} ext{i}]), 'file')
             continue
         else
             dh_psc_conversion(...
@@ -83,67 +78,31 @@ end
 
 % run frequency analysis
 for i = 1:length(all_data)
-    if all_hp_cutoff(i)
-        pref_hp = 'b';
-    else
-        pref_hp = '';
-    end
-    
-    if all_psc_cutoff(i)
-        pref_psc = 'p';
-    else
-        pref_psc = '';
-    end
-    
     dh_retino_fourier(...
-        fullfile(path{i}, [pref_psc pref_hp file{i} ext{i}]),...
+        fullfile(path{i}, ['pb' file{i} ext{i}]),...
         all_freq(i),...
         all_fix(i),...
         all_period(i),...
         all_tr(i));
 end
 
-if input.pol.hp_cutoff
-    pref_hp = 'b';
-else
-    pref_hp = '';
-end
-
-if input.pol.psc_cutoff
-    pref_psc = 'p';
-else
-    pre_psc = '';
-end
-
 % run phase averaging
 [pos_path, pos_file, pos_ext] = fileparts(input.pol.data.pos);
 [neg_path, neg_file, neg_ext] = fileparts(input.pol.data.neg);
 dh_average_phase(...
-    fullfile(pos_path,['r' pref_psc pref_hp pos_file '_real' pos_ext]),...
-    fullfile(pos_path,['r' pref_psc pref_hp pos_file '_imag' pos_ext]),...
-    fullfile(neg_path,['r' pref_psc pref_hp neg_file '_real' neg_ext]),...
-    fullfile(neg_path,['r' pref_psc pref_hp neg_file '_imag' neg_ext]),...  
+    fullfile(pos_path,['rpb' pos_file '_real' pos_ext]),...
+    fullfile(pos_path,['rpb' pos_file '_imag' pos_ext]),...
+    fullfile(neg_path,['rpb' neg_file '_real' neg_ext]),...
+    fullfile(neg_path,['rpb' neg_file '_imag' neg_ext]),...  
     'pol',...
     input.pol.freq);
-
-if input.ecc.hp_cutoff
-    pref_hp = 'b';
-else
-    pref_hp = '';
-end
-
-if input.ecc.psc_cutoff
-    pref_psc = 'p';
-else
-    pref_psc = '';
-end
 
 [pos_path, pos_file, pos_ext] = fileparts(input.ecc.data.pos);
 [neg_path, neg_file, neg_ext] = fileparts(input.ecc.data.neg);
 dh_average_phase(...
-    fullfile(pos_path,['r' pref_psc pref_hp pos_file '_real' pos_ext]),...
-    fullfile(pos_path,['r' pref_psc pref_hp pos_file '_imag' pos_ext]),...
-    fullfile(neg_path,['r' pref_psc pref_hp neg_file '_real' neg_ext]),...
-    fullfile(neg_path,['r' pref_psc pref_hp neg_file '_imag' neg_ext]),...  
+    fullfile(pos_path,['rpb' pos_file '_real' pos_ext]),...
+    fullfile(pos_path,['rpb' pos_file '_imag' pos_ext]),...
+    fullfile(neg_path,['rpb' neg_file '_real' neg_ext]),...
+    fullfile(neg_path,['rpb' neg_file '_imag' neg_ext]),...  
     'ecc',...
     input.ecc.freq);

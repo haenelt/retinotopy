@@ -40,15 +40,9 @@ for i = 1:length(input.data)
     % path and filename
     [path, file, ext] = fileparts(input.data{i});
     
-    if input.hp_cutoff
-        pref_hp = 'b';
-    else
-        pref_hp = '';
-    end
-    
     % run baseline correction
     if input.hp_cutoff
-        if ~exist(fullfile(path,[pref_hp file ext]), 'file')
+        if ~exist(fullfile(path,['b' file ext]), 'file')
             dh_baseline_correction(...
                 input.data{i},...
                 input.tr,...
@@ -56,24 +50,18 @@ for i = 1:length(input.data)
         end
     end
 
-    if input.psc_cutoff
-        pref_psc = 'p';
-    else
-        pref_psc = '';
-    end
-
     % run psc conversion
     if input.psc_cutoff
-        if ~exist(fullfile(path,[pref_psc pref_hp file ext]), 'file')
+        if ~exist(fullfile(path,['pb' file ext]), 'file')
             dh_psc_conversion(...
-                fullfile(path,[pref_hp file ext]),...
+                fullfile(path,['b' file ext]),...
                 input.psc_cutoff);
         end
     end
     
     % run frequency analysis
     dh_retino_fourier(...
-        fullfile(path, [pref_psc pref_hp file ext]),...
+        fullfile(path, ['pb' file ext]),...
         input.freq,...
         input.fix,...
         input.period,...
@@ -81,21 +69,17 @@ for i = 1:length(input.data)
 
     % run multipol phase
     dh_multipol_phase(...
-        fullfile(path,['r' pref_psc pref_hp file '_real' ext]),...
-        fullfile(path,['r' pref_psc pref_hp file '_imag' ext]),...
+        fullfile(path,['rpb' file '_real' ext]),...
+        fullfile(path,['rpb' file '_imag' ext]),...
         input.freq,...
         name_sess,...
         path_output);
     
     if cleanup
-        if pref_hp
-            delete(fullfile(path,[pref_hp file ext]));
-        end
-        if pref_psc
-            delete(fullfile(path,[pref_psc pref_hp file ext]));
-        end
-        delete(fullfile(path,['r' pref_psc pref_hp file '_real' ext]));
-        delete(fullfile(path,['r' pref_psc pref_hp file '_imag' ext]));
+        delete(fullfile(path,['b' file ext]));
+        delete(fullfile(path,['pb' file ext]));
+        delete(fullfile(path,['rpb' file '_real' ext]));
+        delete(fullfile(path,['rpb' file '_imag' ext]));
     end
     
 end
