@@ -50,8 +50,6 @@ if cutoff_psc
     data_array(data_array_min < 100 - cutoff_psc) = 100 - cutoff_psc;
 end
 
-data_array = data_array - 100;
-
 % write output
 for i = 1:nt
   data_img(i).dim = dim;
