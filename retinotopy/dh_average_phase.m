@@ -1,24 +1,44 @@
 function dh_average_phase(pos_real, pos_imag, neg_real, neg_imag, ...
-    name_sess, freq)
+    name_sess, freq, phase_style)
 % Average phase
 %
 % dh_average_phase(pos_real, pos_imag, neg_real, neg_imag, ...
-%    name_sess, freq)
+%    name_sess, freq, phase_style)
 %
 % Inputs:
-%   pos_real  - real part of fft in positive direction.
-%   pos_imag  - imaginary part of fft in positive direction.
-%   neg_real  - real part of fft in negative direction.
-%   neg_imag  - imaginary part of fft in negative direction.
-%   name_sess - name of session.
-%   freq      - number of cycles.
+%   pos_real    - real part of fft in positive direction.
+%   pos_imag    - imaginary part of fft in positive direction.
+%   neg_real    - real part of fft in negative direction.
+%   neg_imag    - imaginary part of fft in negative direction.
+%   name_sess   - name of session.
+%   freq        - number of cycles.
+%   phase_style - retinotopy styles (standard, visual).
 %
 % This function takes the real and imaginary parts from the time series fft
 % of stimuli pairs in positive and negative directions. Both directions are
 % averaged to compensate for the hemodynamic lag. Output files are saved in
-% a created output folder with prefix s.
+% a created output folder with prefix s. Phase maps can be encoded by two
+% different styles (standard, visual). The polar angle map with style
+% 'visual' thereby matches the convention in Noah Benson's neuropythy 
+% library.
+%
+% Standard:
+%   left hemisphere: -90->+90 (UVM -> RHM -> LVM)
+%   right hemisphere: -90->-180,+180->90 (UVM -> LHM -> LVM)
+% Visual:
+%   left hemisphere: 0->180 (UVM -> RHM -> LVM)
+%   right hemisphere: 0->-180 (UVM -> LHM -> LVM)
 %__________________________________________________________________________
 % Copyright (C) 2021 Daniel Haenelt
+
+if ~exist('phase_style', 'var')
+    phase_style = 'standard';
+end
+
+phase_style_list = {'standard', 'visual'};
+if ~any(strcmp(phase_style_list, phase_style))
+    error('Error. Unknown phase_style!');
+end
 
 % parameters
 % freq_ignored is a vector containing the frequencies that should be
@@ -76,7 +96,14 @@ avg_F = avg_A ./ mpw * 100; % F-statistic
 avg_snr = avg_A ./ mstd; % SNR
 
 % transform to phases
-avg_pha = atan2(avg_imag_freq,avg_real_freq)/pi*180; % phase in degrees
+if strcmp(phase_style, 'standard')
+    avg_pha = atan2(avg_imag_freq,avg_real_freq)/pi*180; % phase in degrees
+end
+
+if strcmp(phase_style, 'visual')
+    avg_pha = (atan2(-1,0) - atan2(avg_imag_freq,avg_real_freq))/pi*180;
+end
+
 avg_pha = mod(avg_pha,360); % phases between 0 and 360
 avg_pha = avg_pha - 180;  % phases between -180 and +180
 

@@ -1,5 +1,5 @@
 function dh_multipol_phase(input_real, input_imag, freq, name_sess, ...
-    path_output)
+    path_output, phase_style)
 % Multipol phase
 %
 % dh_multipol_phase(input_real, input_imag, freq, name_sess, ...
@@ -11,6 +11,7 @@ function dh_multipol_phase(input_real, input_imag, freq, name_sess, ...
 %   freq        - number of cycles.
 %   name_sess   - name of session included in the basename.
 %   path_output - path where output is saved.
+%   phase_style - retinotopy styles (standard, visual).
 %
 % This function takes the real and imaginary parts from the time series
 % fft and computes several metrics. Similar to Dumoulin et al. 2017, we 
@@ -21,9 +22,27 @@ function dh_multipol_phase(input_real, input_imag, freq, name_sess, ...
 % the frequency spectrum. Based on this, the voxel population can be 
 % thresholded to investigate different subpopulations. To run this 
 % function, the number of runs has to be specified to choose an appropriate 
-% results folder location.
+% results folder location. Phase maps can be encoded by two different 
+% styles (standard, visual). The polar angle map with style 'visual' 
+% thereby matches the convention in Noah Benson's neuropythy library.
+%
+% Standard:
+%   left hemisphere: -90->+90 (UVM -> RHM -> LVM)
+%   right hemisphere: -90->-180,+180->90 (UVM -> LHM -> LVM)
+% Visual:
+%   left hemisphere: 0->180 (UVM -> RHM -> LVM)
+%   right hemisphere: 0->-180 (UVM -> LHM -> LVM)
 %__________________________________________________________________________
 % Copyright (C) 2021 Daniel Haenelt
+
+if ~exist('phase_style', 'var')
+    phase_style = 'standard';
+end
+
+phase_style_list = {'standard', 'visual'};
+if ~any(strcmp(phase_style_list, phase_style))
+    error('Error. Unknown phase_style!');
+end
 
 % parameters
 % freq_ignored is a vector containing the frequencies that should be
@@ -98,7 +117,14 @@ snr_array = A_array ./ mstd; % SNR
 coherence_array = A_array ./ sumpw; % coherence
 
 % transform to phases
-pha_array = atan2(data_imag_freq_array,data_real_freq_array)/pi*180; % phase in degrees
+if strcmp(phase_style, 'standard')
+    pha_array = atan2(data_imag_freq_array,data_real_freq_array)/pi*180; % phase in degrees
+end
+
+if strcmp(phase_style, 'visual')
+    pha_array = (atan2(-1,0) - atan2(data_imag_freq_array,data_real_freq_array))/pi*180;
+end
+
 pha_array = mod(pha_array,360); % phases between 0 and 360
 pha_array = pha_array - 180;  % phases between -180 and +180
 

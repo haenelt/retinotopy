@@ -20,6 +20,7 @@ input.fix = 12; % pre and post run baseline block in s
 input.freq = 10.5; % number of cycles
 input.hp_cutoff = 144; % cutoff frequency 1/cutoff in Hz
 input.psc_cutoff = 50; % threshold value for psc conversion
+input.phase_style = 'standard'; % standard | visual
 
 % output specification
 name_sess = 'SE_EPI2';
@@ -58,7 +59,8 @@ for i = 1:length(input.data)
         fullfile(path,['rpb' file '_imag' ext]),...
         input.freq,...
         name_sess,...
-        path_output);
+        path_output, ...
+        input.phase_style);
     
     if cleanup
         delete(fullfile(path,['b' file ext]));
