@@ -27,8 +27,8 @@ function dh_multipol_phase(input_real, input_imag, freq, name_sess, ...
 % thereby matches the convention in Noah Benson's neuropythy library.
 %
 % Standard:
-%   left hemisphere: -90->+90 (UVM -> RHM -> LVM)
-%   right hemisphere: -90->-180,+180->90 (UVM -> LHM -> LVM)
+%   left hemisphere: -90->-180,+180->90 (UVM -> LHM -> LVM)
+%   right hemisphere: -90->+90 (UVM -> RHM -> LVM)
 % Visual:
 %   left hemisphere: 0->180 (UVM -> RHM -> LVM)
 %   right hemisphere: 0->-180 (UVM -> LHM -> LVM)

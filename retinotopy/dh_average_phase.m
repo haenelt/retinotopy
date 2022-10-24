@@ -23,8 +23,8 @@ function dh_average_phase(pos_real, pos_imag, neg_real, neg_imag, ...
 % library.
 %
 % Standard:
-%   left hemisphere: -90->+90 (UVM -> RHM -> LVM)
-%   right hemisphere: -90->-180,+180->90 (UVM -> LHM -> LVM)
+%   left hemisphere: -90->-180,+180->90 (UVM -> LHM -> LVM)
+%   right hemisphere: -90->+90 (UVM -> RHM -> LVM)
 % Visual:
 %   left hemisphere: 0->180 (UVM -> RHM -> LVM)
 %   right hemisphere: 0->-180 (UVM -> LHM -> LVM)
